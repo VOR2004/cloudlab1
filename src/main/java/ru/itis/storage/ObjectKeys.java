@@ -1,6 +1,7 @@
 package ru.itis.storage;
 
 import java.util.Optional;
+import ru.itis.model.PhotoNames;
 
 public final class ObjectKeys {
     public static final String ALBUMS_PREFIX = "albums/";
@@ -9,6 +10,10 @@ public final class ObjectKeys {
 
     public static String albumPrefix(String album) {
         return ALBUMS_PREFIX + album + "/";
+    }
+
+    public static String photoKey(String album, String filename) {
+        return albumPrefix(album) + filename;
     }
 
     public static Optional<String> albumFromMarker(String key) {
@@ -26,8 +31,6 @@ public final class ObjectKeys {
             return Optional.empty();
         }
         String name = key.substring(prefix.length());
-        boolean jpeg = name.regionMatches(true, name.length() - 4, ".jpg", 0, 4)
-                || name.regionMatches(true, name.length() - 5, ".jpeg", 0, 5);
-        return !name.contains("/") && jpeg ? Optional.of(name) : Optional.empty();
+        return !name.contains("/") && PhotoNames.isPhoto(name) ? Optional.of(name) : Optional.empty();
     }
 }

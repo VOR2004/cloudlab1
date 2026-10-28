@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import ru.itis.cli.command.Command;
 import ru.itis.cli.command.ListAlbums;
 import ru.itis.cli.command.ListPhotos;
+import ru.itis.cli.command.Upload;
 import ru.itis.exception.CommandUnavailableException;
 import ru.itis.service.PhotoArchiveService;
 
@@ -20,6 +21,7 @@ public final class CommandExecutor {
         switch (command) {
             case ListAlbums ignored -> service.listAlbums().forEach(output::println);
             case ListPhotos photos -> service.listPhotos(photos.album()).forEach(output::println);
+            case Upload upload -> service.upload(upload.album(), upload.path());
             default -> throw new CommandUnavailableException();
         }
     }

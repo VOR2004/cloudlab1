@@ -3,11 +3,15 @@ package ru.itis.storage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.nio.file.Path;
+import java.io.UncheckedIOException;
 import ru.itis.exception.AlbumNotFoundException;
 import ru.itis.exception.StorageException;
 import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public final class S3PhotoArchiveStorage implements PhotoArchiveStorage {
     private final S3Client client;
@@ -37,6 +41,32 @@ public final class S3PhotoArchiveStorage implements PhotoArchiveStorage {
         return keys.stream()
                 .flatMap(key -> ObjectKeys.photoFromKey(album, key).stream())
                 .toList();
+    }
+
+    @Override
+    public void createAlbum(String album) {
+        try {
+            client.putObject(PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(ObjectKeys.albumPrefix(album))
+                    .contentType("application/x-directory")
+                    .build(), RequestBody.empty());
+        } catch (SdkException exception) {
+            throw new StorageException(exception);
+        }
+    }
+
+    @Override
+    public void uploadPhoto(String album, Path photo) {
+        try {
+            client.putObject(PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(ObjectKeys.photoKey(album, photo.getFileName().toString()))
+                    .contentType("image/jpeg")
+                    .build(), RequestBody.fromFile(photo));
+        } catch (SdkException | UncheckedIOException exception) {
+            throw new StorageException(exception);
+        }
     }
 
     private void forEachKey(String prefix, Consumer<String> consumer) {

@@ -7,6 +7,7 @@ import ru.itis.cli.CommandExecutor;
 import ru.itis.cli.CommandParser;
 import ru.itis.cli.command.ListAlbums;
 import ru.itis.cli.command.ListPhotos;
+import ru.itis.cli.command.Upload;
 import ru.itis.config.StorageConfig;
 import ru.itis.exception.CloudPhotoException;
 import ru.itis.exception.CommandUnavailableException;
@@ -17,8 +18,10 @@ public final class CloudPhotoApplication {
     private final CommandParser parser;
     private final Function<StorageConfig, PhotoArchiveStorage> storageFactory;
 
-    public CloudPhotoApplication(CommandParser parser,
-                                Function<StorageConfig, PhotoArchiveStorage> storageFactory) {
+    public CloudPhotoApplication(
+            CommandParser parser,
+            Function<StorageConfig, PhotoArchiveStorage> storageFactory
+    ) {
         this.parser = parser;
         this.storageFactory = storageFactory;
     }
@@ -28,7 +31,8 @@ public final class CloudPhotoApplication {
         try {
             StorageConfig config = StorageConfig.fromEnvironment(environment);
             var command = parser.parse(args);
-            if (!(command instanceof ListAlbums) && !(command instanceof ListPhotos)) {
+            if (!(command instanceof ListAlbums) && !(command instanceof ListPhotos)
+                    && !(command instanceof Upload)) {
                 throw new CommandUnavailableException();
             }
             try (PhotoArchiveStorage storage = storageFactory.apply(config)) {
