@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.function.Function;
 import ru.itis.cli.CommandExecutor;
 import ru.itis.cli.CommandParser;
-import ru.itis.cli.command.MakeSite;
 import ru.itis.config.StorageConfig;
 import ru.itis.exception.CloudPhotoException;
-import ru.itis.exception.CommandUnavailableException;
+import ru.itis.site.SitePublisher;
+import ru.itis.site.SiteRenderer;
 import ru.itis.service.PhotoArchiveService;
 import ru.itis.storage.PhotoArchiveStorage;
 
@@ -29,12 +29,10 @@ public final class CloudPhotoApplication {
         try {
             StorageConfig config = StorageConfig.fromEnvironment(environment);
             var command = parser.parse(args);
-            if (command instanceof MakeSite) {
-                throw new CommandUnavailableException();
-            }
             try (PhotoArchiveStorage storage = storageFactory.apply(config)) {
                 var service = new PhotoArchiveService(storage);
-                new CommandExecutor(service, output).execute(command);
+                var sitePublisher = new SitePublisher(storage, new SiteRenderer());
+                new CommandExecutor(service, sitePublisher, output).execute(command);
             }
             return 0;
         } catch (CloudPhotoException exception) {

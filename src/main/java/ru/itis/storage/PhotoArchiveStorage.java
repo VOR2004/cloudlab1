@@ -11,6 +11,8 @@ public interface PhotoArchiveStorage extends AutoCloseable {
     void downloadPhoto(String album, String photo, Path destination);
     void deletePhoto(String album, String photo);
     void deleteAlbumMarker(String album);
+    void configureWebsite();
+    void publishPage(String key, String html);
 
     @Override
     void close();

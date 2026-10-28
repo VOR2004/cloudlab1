@@ -65,3 +65,6 @@ bin/
 !*.example.tfvars
 crash.log
 crash.*.log
+
+# Local bucket access recovery settings
+/infra/access-policy.local.json

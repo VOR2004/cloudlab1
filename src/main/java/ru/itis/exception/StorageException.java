@@ -1,11 +1,16 @@
 package ru.itis.exception;
 
 import ru.itis.i18n.MessageKey;
+import ru.itis.storage.StorageOperation;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 
 public final class StorageException extends CloudPhotoException {
     public StorageException(Throwable cause) {
         super(MessageKey.STORAGE_FAILURE, cause, diagnostic(cause));
+    }
+
+    public StorageException(StorageOperation operation, Throwable cause) {
+        super(MessageKey.STORAGE_OPERATION_FAILURE, cause, operation.apiName(), diagnostic(cause));
     }
 
     private static String diagnostic(Throwable cause) {

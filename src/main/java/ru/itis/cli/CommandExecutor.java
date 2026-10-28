@@ -8,15 +8,18 @@ import ru.itis.cli.command.Upload;
 import ru.itis.cli.command.Download;
 import ru.itis.cli.command.DeleteAlbum;
 import ru.itis.cli.command.DeletePhoto;
-import ru.itis.exception.CommandUnavailableException;
+import ru.itis.cli.command.MakeSite;
+import ru.itis.site.SitePublisher;
 import ru.itis.service.PhotoArchiveService;
 
 public final class CommandExecutor {
     private final PhotoArchiveService service;
     private final PrintStream output;
+    private final SitePublisher sitePublisher;
 
-    public CommandExecutor(PhotoArchiveService service, PrintStream output) {
+    public CommandExecutor(PhotoArchiveService service, SitePublisher sitePublisher, PrintStream output) {
         this.service = service;
+        this.sitePublisher = sitePublisher;
         this.output = output;
     }
 
@@ -28,7 +31,7 @@ public final class CommandExecutor {
             case Download download -> service.download(download.album(), download.path());
             case DeleteAlbum album -> service.deleteAlbum(album.album());
             case DeletePhoto photo -> service.deletePhoto(photo.album(), photo.photo());
-            default -> throw new CommandUnavailableException();
+            case MakeSite ignored -> sitePublisher.publish();
         }
     }
 }
