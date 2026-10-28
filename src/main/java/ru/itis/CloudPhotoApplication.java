@@ -5,9 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import ru.itis.cli.CommandExecutor;
 import ru.itis.cli.CommandParser;
-import ru.itis.cli.command.ListAlbums;
-import ru.itis.cli.command.ListPhotos;
-import ru.itis.cli.command.Upload;
+import ru.itis.cli.command.MakeSite;
 import ru.itis.config.StorageConfig;
 import ru.itis.exception.CloudPhotoException;
 import ru.itis.exception.CommandUnavailableException;
@@ -31,8 +29,7 @@ public final class CloudPhotoApplication {
         try {
             StorageConfig config = StorageConfig.fromEnvironment(environment);
             var command = parser.parse(args);
-            if (!(command instanceof ListAlbums) && !(command instanceof ListPhotos)
-                    && !(command instanceof Upload)) {
+            if (command instanceof MakeSite) {
                 throw new CommandUnavailableException();
             }
             try (PhotoArchiveStorage storage = storageFactory.apply(config)) {

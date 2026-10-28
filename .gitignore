@@ -5,6 +5,9 @@ build/
 !**/src/test/**/build/
 .kotlin
 
+### Local tests ###
+/src/test/
+
 ### IntelliJ IDEA ###
 .idea/*
 !.idea/encodings.xml

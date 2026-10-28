@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.io.UncheckedIOException;
 import ru.itis.exception.AlbumNotFoundException;
 import ru.itis.exception.StorageException;
@@ -12,6 +14,8 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 public final class S3PhotoArchiveStorage implements PhotoArchiveStorage {
     private final S3Client client;
@@ -65,6 +69,42 @@ public final class S3PhotoArchiveStorage implements PhotoArchiveStorage {
                     .contentType("image/jpeg")
                     .build(), RequestBody.fromFile(photo));
         } catch (SdkException | UncheckedIOException exception) {
+            throw new StorageException(exception);
+        }
+    }
+
+    @Override
+    public void downloadPhoto(String album, String photo, Path destination) {
+        try {
+            client.getObject(GetObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(ObjectKeys.photoKey(album, photo))
+                    .build(), (response, input) -> {
+                        Files.copy(input, destination, StandardCopyOption.REPLACE_EXISTING);
+                        return response;
+                    });
+        } catch (SdkException exception) {
+            throw new StorageException(exception);
+        }
+    }
+
+    @Override
+    public void deletePhoto(String album, String photo) {
+        deleteKey(ObjectKeys.photoKey(album, photo));
+    }
+
+    @Override
+    public void deleteAlbumMarker(String album) {
+        deleteKey(ObjectKeys.albumPrefix(album));
+    }
+
+    private void deleteKey(String key) {
+        try {
+            client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build());
+        } catch (SdkException exception) {
             throw new StorageException(exception);
         }
     }
