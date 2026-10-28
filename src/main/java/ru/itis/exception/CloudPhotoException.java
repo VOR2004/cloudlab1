@@ -10,4 +10,8 @@ public abstract class CloudPhotoException extends RuntimeException {
     protected CloudPhotoException(MessageKey key, Throwable cause) {
         super(Messages.get(key), cause);
     }
+
+    protected CloudPhotoException(MessageKey key, String value) {
+        super(Messages.get(key, value));
+    }
 }

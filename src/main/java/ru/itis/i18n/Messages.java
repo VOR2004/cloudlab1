@@ -20,7 +20,7 @@ public final class Messages {
         }
     }
     private Messages() { }
-    public static String get(MessageKey key) {
-        return BUNDLE.getString(key.resourceKey());
+    public static String get(MessageKey key, Object... arguments) {
+        return BUNDLE.getString(key.resourceKey()).formatted(arguments);
     }
 }
