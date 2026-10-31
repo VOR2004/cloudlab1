@@ -118,3 +118,8 @@ terraform apply
 `apply` изменяет облачные ресурсы после подтверждения. Страницы публикуются через `mksite`.
 В Git добавляются `.tf`, пример переменных и `.terraform.lock.hcl`.
 Локальные `.tfvars`, `.tfstate`, папка `.terraform/` и секреты игнорируются.
+
+---------------------------------
+ссылки на скринкаст: 
+https://disk.360.yandex.ru/i/UDL0xyjspo7Vtg
+https://drive.google.com/file/d/1vx94HhlTgpA91qD5wrmMTQlr_gMHIZkF/view?usp=sharing
